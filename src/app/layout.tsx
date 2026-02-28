@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito, Fraunces } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${nunito.variable} ${fraunces.variable}`}>
       <body className="antialiased font-body bg-cream text-ink">
+        <NextTopLoader color="var(--ink)" showSpinner={false} />
         {children}
       </body>
     </html>

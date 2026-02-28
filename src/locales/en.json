@@ -16,17 +16,30 @@
         "error": "An error occurred",
         "today": "Today",
         "yesterday": "Yesterday",
-        "ago": "{time} ago"
+        "ago": "{time} ago",
+        "continue": "Continue",
+        "or": "or",
+        "nav": {
+            "home": "Home",
+            "pets": "Pets",
+            "meals": "Meals",
+            "health": "Health"
+        }
     },
     "auth": {
         "login": "Sign in",
         "signup": "Create account",
         "logout": "Sign out",
         "email": "Email address",
-        "magicLink": "Send magic link",
-        "magicLinkSent": "A sign-in link has been sent to your email.",
+        "password": "Password",
+        "magicLink": "Magic link",
+        "magicLinkSent": "A link has been sent to your email.",
         "continueWithGoogle": "Continue with Google",
-        "or": "or"
+        "or": "or",
+        "noAccount": "No account yet? Sign up",
+        "hasAccount": "Already have an account? Sign in",
+        "useMagicLink": "Or use a passwordless magic link",
+        "backToLogin": "Back to standard sign in"
     },
     "household": {
         "title": "Households",
@@ -149,5 +162,15 @@
         "pets": "Pets",
         "meals": "Meals",
         "health": "Health"
+    },
+    "profile": {
+        "title": "My Profile",
+        "personalInfo": "Personal Information",
+        "fullName": "Full Name",
+        "email": "Email",
+        "save": "Save changes",
+        "logout": "Sign out",
+        "updateSuccess": "Profile updated successfully!",
+        "settings": "Settings"
     }
 }

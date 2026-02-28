@@ -16,17 +16,30 @@
         "error": "Une erreur est survenue",
         "today": "Aujourd'hui",
         "yesterday": "Hier",
-        "ago": "il y a {time}"
+        "ago": "il y a {time}",
+        "continue": "Continuer",
+        "or": "ou",
+        "nav": {
+            "home": "Home",
+            "pets": "Animaux",
+            "meals": "Repas",
+            "health": "Santé"
+        }
     },
     "auth": {
         "login": "Se connecter",
         "signup": "Créer un compte",
         "logout": "Se déconnecter",
         "email": "Adresse email",
-        "magicLink": "Recevoir un lien de connexion",
-        "magicLinkSent": "Un lien de connexion a été envoyé à votre adresse email.",
+        "password": "Mot de passe",
+        "magicLink": "Recevoir un lien magique",
+        "magicLinkSent": "Un lien de connexion a été envoyé à votre email.",
         "continueWithGoogle": "Continuer avec Google",
-        "or": "ou"
+        "or": "ou",
+        "noAccount": "Pas encore de compte ? S'inscrire",
+        "hasAccount": "Déjà un compte ? Se connecter",
+        "useMagicLink": "Ou utiliser un lien magique (sans mot de passe)",
+        "backToLogin": "Retour à la connexion classique"
     },
     "household": {
         "title": "Foyers",
@@ -149,5 +162,15 @@
         "pets": "Animaux",
         "meals": "Repas",
         "health": "Santé"
+    },
+    "profile": {
+        "title": "Mon profil",
+        "personalInfo": "Informations personnelles",
+        "fullName": "Nom complet",
+        "email": "Email",
+        "save": "Enregistrer les modifications",
+        "logout": "Se déconnecter",
+        "updateSuccess": "Profil mis à jour avec succès !",
+        "settings": "Paramètres"
     }
 }

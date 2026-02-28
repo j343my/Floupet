@@ -1,7 +1,6 @@
-import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
@@ -23,14 +22,9 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         <div className="min-h-screen bg-ink text-white selection:bg-coral selection:text-white flex flex-col font-body">
             {/* Nav */}
             <header className="flex w-full items-center justify-between px-6 py-6 lg:px-16">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-coral shadow-[var(--shadow-coral)]">
-                        <Image src="/favicon.svg" alt="Floupet Icon" width={24} height={24} />
-                    </div>
-                    <span className="font-display text-2xl font-bold tracking-tight">
-                        Floupet
-                    </span>
-                </div>
+                <Link href={`/${locale}`} className="flex items-center gap-3">
+                    <Logo size={40} textColor="text-white" />
+                </Link>
                 <div className="flex items-center gap-4">
                     <Link
                         href={`/${locale}/app`}
@@ -44,7 +38,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
             {/* Hero */}
             <main className="flex flex-1 flex-col items-center justify-center px-6 py-20 lg:px-16 text-center">
                 <div className="flex animate-[float_3.5s_ease-in-out_infinite] items-center justify-center mb-10 h-28 w-28 rounded-[36px] bg-coral shadow-[var(--shadow-coral)]">
-                    <Image src="/favicon.svg" alt="Floupet App Logo" width={64} height={64} />
+                    <Logo size={64} showText={false} />
                 </div>
 
                 <h1 className="font-display text-5xl font-bold leading-[1.1] tracking-tight md:text-7xl lg:text-[80px]">
@@ -110,4 +104,3 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         </div>
     );
 }
-
