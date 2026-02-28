@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Pet, FeedLog } from "@/types";
+import { PetSummary, FeedLog } from "@/types";
 import AddMealForm from "./AddMealForm";
 import FeedLogItem from "./FeedLogItem";
 
 interface FeedingClientProps {
-    pets: Pet[];
+    pets: PetSummary[];
     householdId: string;
     currentUserId: string;
     userRole: string;

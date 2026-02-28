@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { FeedLog, Pet } from "@/types";
+import { FeedLog, Pet, PetSummary } from "@/types";
 import AddMealForm from "../../feeding/AddMealForm";
 import FeedLogItem from "../../feeding/FeedLogItem";
 
@@ -11,7 +11,7 @@ interface PetFeedingSummaryProps {
     currentUserId: string;
     userRole: string;
     locale: string;
-    allPets: Pet[];
+    allPets: PetSummary[];
 }
 
 function formatDate(date: Date): string {

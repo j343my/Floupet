@@ -24,6 +24,9 @@ export interface Pet {
     updated_at: string;
 }
 
+// Lightweight version used in lists/selectors (partial DB select)
+export type PetSummary = Pick<Pet, 'id' | 'name' | 'species' | 'photo_url' | 'household_id'>;
+
 export interface Product {
     id: string;
     barcode?: string;

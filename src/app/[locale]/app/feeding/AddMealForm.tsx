@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Pet, Product } from "@/types";
+import { PetSummary, Product } from "@/types";
 
 interface AddMealFormProps {
-    pets: Pet[];
+    pets: PetSummary[];
     initialPetId?: string;
     householdId: string;
     onSuccess: () => void;
