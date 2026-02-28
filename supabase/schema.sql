@@ -165,6 +165,19 @@ create table public.medication_events (
 );
 
 
+-- Invitations (Pending household invites)
+create table public.invitations (
+  id uuid primary key default uuid_generate_v4(),
+  household_id uuid references public.households(id) on delete cascade not null,
+  email text not null,
+  role household_role_enum not null default 'member',
+  invited_by uuid references public.profiles(id) on delete set null,
+  token uuid unique default uuid_generate_v4(),
+  accepted_at timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 -- ==============================================================================
 -- 4. ROW LEVEL SECURITY (RLS)
 -- L'isolation de la donnée est stricte : un user ne voit que les foyers 
@@ -174,6 +187,7 @@ create table public.medication_events (
 alter table public.profiles enable row level security;
 alter table public.households enable row level security;
 alter table public.memberships enable row level security;
+alter table public.invitations enable row level security;
 alter table public.pets enable row level security;
 alter table public.products enable row level security;
 alter table public.feed_logs enable row level security;
@@ -211,6 +225,20 @@ create policy "Owner and Admin can update household" on public.households
 create policy "Users can view memberships of their households" on public.memberships
   for select using (
     household_id in (select household_id from public.memberships where user_id = auth.uid())
+  );
+
+-- INVITATIONS
+-- Tout le monde peut voir une invitation (pour afficher le nom du foyer via le token)
+create policy "Invitations are viewable by everyone" on public.invitations
+  for select using (true);
+
+-- L'insertion/suppression dépend du rôle (Owner / Admin)
+create policy "Owner and Admin can manage invitations" on public.invitations
+  for all using (
+    household_id in (
+      select household_id from public.memberships 
+      where user_id = auth.uid() and role in ('owner', 'admin')
+    )
   );
 
 -- PETS
