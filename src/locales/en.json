@@ -1,0 +1,153 @@
+{
+    "common": {
+        "appName": "Floupet",
+        "tagline": "The companion for your companions",
+        "loading": "Loading...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "confirm": "Confirm",
+        "back": "Back",
+        "next": "Next",
+        "search": "Search",
+        "noResults": "No results",
+        "error": "An error occurred",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "ago": "{time} ago"
+    },
+    "auth": {
+        "login": "Sign in",
+        "signup": "Create account",
+        "logout": "Sign out",
+        "email": "Email address",
+        "magicLink": "Send magic link",
+        "magicLinkSent": "A sign-in link has been sent to your email.",
+        "continueWithGoogle": "Continue with Google",
+        "or": "or"
+    },
+    "household": {
+        "title": "Households",
+        "create": "Create a household",
+        "name": "Household name",
+        "members": "Members",
+        "invite": "Invite a member",
+        "settings": "Household settings",
+        "roles": {
+            "owner": "Owner",
+            "admin": "Admin",
+            "member": "Member",
+            "viewer": "Viewer"
+        }
+    },
+    "dashboard": {
+        "greeting": "Hello {name} 👋",
+        "today": "Today",
+        "quickActions": "Quick actions",
+        "addMeal": "+ Meal",
+        "addWeight": "+ Weight",
+        "recentActivity": "Recent activity",
+        "urgentReminders": "Urgent reminders"
+    },
+    "pets": {
+        "title": "Pets",
+        "add": "Add a pet",
+        "name": "Pet name",
+        "species": "Species",
+        "breed": "Breed",
+        "birthDate": "Birth date",
+        "sex": "Sex",
+        "neutered": "Neutered",
+        "targetWeight": "Target weight",
+        "notes": "Notes",
+        "archive": "Archive",
+        "speciesOptions": {
+            "cat": "Cat",
+            "dog": "Dog",
+            "rabbit": "Rabbit",
+            "hamster": "Hamster",
+            "bird": "Bird",
+            "fish": "Fish",
+            "reptile": "Reptile",
+            "other": "Other"
+        },
+        "sexOptions": {
+            "male": "Male",
+            "female": "Female",
+            "unknown": "Unknown"
+        }
+    },
+    "feeding": {
+        "title": "Feeding log",
+        "addMeal": "Add a meal",
+        "newMeal": "New meal",
+        "product": "Product",
+        "quantity": "Quantity",
+        "grams": "Grams",
+        "portions": "Portions",
+        "dailyTotal": "Daily total",
+        "meals": "meals",
+        "lastMeal": "Last meal",
+        "scanProduct": "Scan a product",
+        "givenBy": "Given by"
+    },
+    "health": {
+        "title": "Health",
+        "weight": "Weight",
+        "weightEvolution": "Weight evolution",
+        "addWeight": "Add a weigh-in",
+        "stable": "Stable",
+        "medications": "Medications",
+        "addMedication": "Add a treatment",
+        "given": "Given",
+        "skipped": "Skipped",
+        "pending": "Pending",
+        "vetAppointments": "Vet appointments",
+        "vaccines": "Vaccines",
+        "upToDate": "Up to date",
+        "dueSoon": "Due soon",
+        "overdue": "Overdue"
+    },
+    "products": {
+        "catalog": "Product catalog",
+        "search": "Search a product...",
+        "unverified": "Unverified",
+        "verified": "Verified",
+        "propose": "Propose a product"
+    },
+    "landing": {
+        "hero": {
+            "title1": "Your pets",
+            "title2": "deserve the",
+            "title3": "best.",
+            "subtitle": "Track their daily life, meals, weight, and health with Floupet.",
+            "cta": "Open Application"
+        },
+        "features": {
+            "title": "Everything for their health",
+            "feeding": {
+                "title": "Feeding Log",
+                "desc": "Keep track of their diet in a single tap."
+            },
+            "weight": {
+                "title": "Weight Tracking",
+                "desc": "Precisely follow their weight evolution over time."
+            },
+            "health": {
+                "title": "Health & Vaccines",
+                "desc": "Never miss a vet appointment or treatment."
+            }
+        },
+        "footer": {
+            "copyright": "© 2026 Floupet. All rights reserved."
+        }
+    },
+    "nav": {
+        "home": "Home",
+        "pets": "Pets",
+        "meals": "Meals",
+        "health": "Health"
+    }
+}

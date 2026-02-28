@@ -1,0 +1,153 @@
+{
+    "common": {
+        "appName": "Floupet",
+        "tagline": "Le compagnon de vos compagnons",
+        "loading": "Chargement...",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "add": "Ajouter",
+        "confirm": "Confirmer",
+        "back": "Retour",
+        "next": "Suivant",
+        "search": "Rechercher",
+        "noResults": "Aucun résultat",
+        "error": "Une erreur est survenue",
+        "today": "Aujourd'hui",
+        "yesterday": "Hier",
+        "ago": "il y a {time}"
+    },
+    "auth": {
+        "login": "Se connecter",
+        "signup": "Créer un compte",
+        "logout": "Se déconnecter",
+        "email": "Adresse email",
+        "magicLink": "Recevoir un lien de connexion",
+        "magicLinkSent": "Un lien de connexion a été envoyé à votre adresse email.",
+        "continueWithGoogle": "Continuer avec Google",
+        "or": "ou"
+    },
+    "household": {
+        "title": "Foyers",
+        "create": "Créer un foyer",
+        "name": "Nom du foyer",
+        "members": "Membres",
+        "invite": "Inviter un membre",
+        "settings": "Paramètres du foyer",
+        "roles": {
+            "owner": "Propriétaire",
+            "admin": "Administrateur",
+            "member": "Membre",
+            "viewer": "Lecteur"
+        }
+    },
+    "dashboard": {
+        "greeting": "Bonjour {name} 👋",
+        "today": "Aujourd'hui",
+        "quickActions": "Actions rapides",
+        "addMeal": "+ Repas",
+        "addWeight": "+ Poids",
+        "recentActivity": "Activité récente",
+        "urgentReminders": "Rappels urgents"
+    },
+    "pets": {
+        "title": "Animaux",
+        "add": "Ajouter un animal",
+        "name": "Nom de l'animal",
+        "species": "Espèce",
+        "breed": "Race",
+        "birthDate": "Date de naissance",
+        "sex": "Sexe",
+        "neutered": "Stérilisé(e)",
+        "targetWeight": "Poids cible",
+        "notes": "Notes",
+        "archive": "Archiver",
+        "speciesOptions": {
+            "cat": "Chat",
+            "dog": "Chien",
+            "rabbit": "Lapin",
+            "hamster": "Hamster",
+            "bird": "Oiseau",
+            "fish": "Poisson",
+            "reptile": "Reptile",
+            "other": "Autre"
+        },
+        "sexOptions": {
+            "male": "Mâle",
+            "female": "Femelle",
+            "unknown": "Non précisé"
+        }
+    },
+    "feeding": {
+        "title": "Journal alimentaire",
+        "addMeal": "Ajouter un repas",
+        "newMeal": "Nouveau repas",
+        "product": "Produit",
+        "quantity": "Quantité",
+        "grams": "Grammes",
+        "portions": "Portions",
+        "dailyTotal": "Total du jour",
+        "meals": "repas",
+        "lastMeal": "Dernier repas",
+        "scanProduct": "Scanner un produit",
+        "givenBy": "Donné par"
+    },
+    "health": {
+        "title": "Santé",
+        "weight": "Poids",
+        "weightEvolution": "Évolution du poids",
+        "addWeight": "Ajouter une pesée",
+        "stable": "Stable",
+        "medications": "Médicaments",
+        "addMedication": "Ajouter un traitement",
+        "given": "Donné",
+        "skipped": "Sauté",
+        "pending": "En attente",
+        "vetAppointments": "Rendez-vous véto",
+        "vaccines": "Vaccins",
+        "upToDate": "À jour",
+        "dueSoon": "Bientôt dû",
+        "overdue": "En retard"
+    },
+    "products": {
+        "catalog": "Catalogue produits",
+        "search": "Rechercher un produit...",
+        "unverified": "Non vérifié",
+        "verified": "Vérifié",
+        "propose": "Proposer un produit"
+    },
+    "landing": {
+        "hero": {
+            "title1": "Vos animaux",
+            "title2": "méritent le",
+            "title3": "meilleur.",
+            "subtitle": "Suivez leur quotidien, repas, poids et santé avec Floupet.",
+            "cta": "Accéder à l'application"
+        },
+        "features": {
+            "title": "Tout pour leur santé",
+            "feeding": {
+                "title": "Suivi alimentaire",
+                "desc": "Gardez un œil sur leur alimentation en un tap."
+            },
+            "weight": {
+                "title": "Courbe de poids",
+                "desc": "Suivez l'évolution de leur poids avec précision."
+            },
+            "health": {
+                "title": "Santé & Vaccins",
+                "desc": "Ne ratez plus aucun rendez-vous ou traitement."
+            }
+        },
+        "footer": {
+            "copyright": "© 2026 Floupet. Tous droits réservés."
+        }
+    },
+    "nav": {
+        "home": "Home",
+        "pets": "Animaux",
+        "meals": "Repas",
+        "health": "Santé"
+    }
+}

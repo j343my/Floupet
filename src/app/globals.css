@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&display=swap');
+
+/* ── Floupet Design System — CSS Variables ─────── */
+
+:root {
+  /* Neutrals */
+  --cream: #FDF8F2;
+  --warm-white: #FFFCF8;
+  --sand: #F5EDE0;
+  --sand-dark: #E8D9C4;
+  --ink: #1A1208;
+  --ink-soft: #3D2E1A;
+  --gray: #8A7E72;
+  --gray-light: #C4B9AE;
+
+  /* Primaire */
+  --coral: #FF6B4A;
+  --coral-light: #FFE8E2;
+  --coral-dark: #E5522F;
+
+  /* Secondaire */
+  --teal: #2DD4BF;
+  --teal-light: #CCFBF1;
+  --teal-dark: #0F9488;
+
+  /* Tertiaire */
+  --plum: #6C3FC5;
+  --plum-light: #EDE9FE;
+  --plum-dark: #4C2A9A;
+
+  /* Sémantique */
+  --success: #22C55E;
+  --warning: #F59E0B;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 40px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(26, 18, 8, 0.08);
+  --shadow-md: 0 8px 24px rgba(26, 18, 8, 0.12);
+  --shadow-coral: 0 8px 30px rgba(255, 107, 74, 0.35);
+  --shadow-teal: 0 8px 30px rgba(45, 212, 191, 0.30);
+  --shadow-plum: 0 8px 30px rgba(108, 63, 197, 0.30);
+}
+
+/* ── Base Styles ──────────────────────────────── */
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

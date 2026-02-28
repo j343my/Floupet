@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floupet — Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:      #FDF8F2;
+    --warm-white: #FFFCF8;
+    --sand:       #F5EDE0;
+    --sand-dark:  #E8D9C4;
+    --coral:      #FF6B4A;
+    --coral-light:#FFE8E2;
+    --coral-dark: #E5522F;
+    --teal:       #2DD4BF;
+    --teal-light: #CCFBF1;
+    --teal-dark:  #0F9488;
+    --plum:       #6C3FC5;
+    --plum-light: #EDE9FE;
+    --plum-dark:  #4C2A9A;
+    --ink:        #1A1208;
+    --ink-soft:   #3D2E1A;
+    --gray:       #8A7E72;
+    --gray-light: #C4B9AE;
+    --success:    #22C55E;
+    --warning:    #F59E0B;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body:    'Nunito', sans-serif;
+    --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px;
+    --radius-xl: 40px; --radius-full: 999px;
+    --shadow-sm: 0 2px 8px rgba(26,18,8,0.08);
+    --shadow-md: 0 8px 24px rgba(26,18,8,0.12);
+    --shadow-coral: 0 8px 30px rgba(255,107,74,0.35);
+    --shadow-teal:  0 8px 30px rgba(45,212,191,0.30);
+    --shadow-plum:  0 8px 30px rgba(108,63,197,0.30);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--cream); font-family:var(--font-body); color:var(--ink); }
+  section { padding:80px 60px; border-bottom:1px solid var(--sand-dark); }
+  .section-label { font-size:11px; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; color:var(--gray); margin-bottom:40px; }
+
+  /* ── LOGO SVG ─────────────────────────────────── */
+  /* 
+    Concept : une forme organique abstraite qui évoque
+    une tête d'animal (oreilles asymétriques arrondies,
+    corps doux) sans être un animal précis.
+    Lisible à toutes les tailles. Universel.
+  */
+
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes fade-up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .anim-float { animation:float 3.5s ease-in-out infinite; }
+  .fu1{animation:fade-up .5s ease both .1s}
+  .fu2{animation:fade-up .5s ease both .2s}
+  .fu3{animation:fade-up .5s ease both .3s}
+  .fu4{animation:fade-up .5s ease both .4s}
+
+  /* ══ HERO ══ */
+  .hero { background:var(--ink); padding:100px 60px; display:flex; align-items:center; justify-content:space-between; gap:60px; flex-wrap:wrap; border-bottom:none; }
+  .hero-left { flex:1; min-width:300px; }
+
+  .logo-main { display:flex; align-items:center; gap:22px; margin-bottom:36px; }
+
+  .logo-icon-lg {
+    width:88px; height:88px;
+    background:var(--coral);
+    border-radius:28px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow-coral);
+    flex-shrink:0;
+  }
+
+  .logo-wordmark {
+    font-family:var(--font-display);
+    font-size:60px; font-weight:700;
+    color:#FFFCF8;
+    letter-spacing:-1.5px; line-height:1;
+  }
+  .logo-wordmark em { color:var(--coral); font-style:normal; }
+  .logo-tagline { font-size:14px; font-weight:500; color:var(--gray-light); letter-spacing:.06em; margin-top:6px; }
+
+  .hero-right { display:flex; flex-direction:column; gap:20px; flex-shrink:0; }
+  .var-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.15em; color:var(--gray); margin-bottom:8px; }
+
+  .logo-row { display:flex; align-items:center; gap:14px; }
+  .logo-icon-md { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .logo-icon-sm { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .logo-icon-xs { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  .wm-lg { font-family:var(--font-display); font-size:36px; font-weight:700; color:#FFFCF8; letter-spacing:-.5px; }
+  .wm-md { font-family:var(--font-display); font-size:28px; font-weight:700; color:#FFFCF8; letter-spacing:-.5px; }
+  .wm-sm { font-family:var(--font-display); font-size:22px; font-weight:700; color:#FFFCF8; letter-spacing:-.3px; }
+
+  /* monogram */
+  .mono {
+    width:56px; height:56px;
+    background:var(--coral);
+    border-radius:18px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow-coral);
+  }
+  .mono-text { font-family:var(--font-display); font-size:30px; font-weight:700; color:white; letter-spacing:-1px; }
+
+  /* light bg card */
+  .logo-light {
+    background:var(--warm-white);
+    border-radius:20px; padding:18px 24px;
+    display:inline-flex; align-items:center; gap:14px;
+  }
+  .logo-light-icon { width:48px; height:48px; background:var(--coral); border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-coral); }
+  .logo-light-text { font-family:var(--font-display); font-size:32px; font-weight:700; color:var(--ink); letter-spacing:-.5px; }
+  .logo-light-text em { color:var(--coral); font-style:normal; }
+
+  /* ══ COLORS ══ */
+  .colors-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:16px; }
+  .color-chip { border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-sm); }
+  .color-swatch { height:96px; display:flex; align-items:flex-end; padding:10px; }
+  .color-info { background:white; padding:12px 14px; }
+  .color-name { font-weight:700; font-size:13px; color:var(--ink); display:block; }
+  .color-hex { font-size:11px; color:var(--gray); font-family:monospace; margin-top:2px; display:block; }
+  .color-role { font-size:10px; color:var(--gray-light); margin-top:2px; display:block; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+
+  /* ══ TYPE ══ */
+  .type-grid { display:flex; flex-direction:column; gap:0; }
+  .type-row { display:grid; grid-template-columns:180px 1fr; gap:24px; align-items:start; padding:32px 0; border-bottom:1px solid var(--sand); }
+  .type-row:last-child { border-bottom:none; }
+  .type-meta-name { font-size:11px; font-weight:800; color:var(--gray); text-transform:uppercase; letter-spacing:.12em; }
+  .type-meta-detail { font-size:11px; color:var(--gray-light); margin-top:6px; line-height:1.7; }
+
+  /* ══ COMPONENTS ══ */
+  .comp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:32px; }
+  .comp-group { display:flex; flex-direction:column; gap:12px; }
+  .comp-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.15em; color:var(--gray); margin-bottom:4px; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--font-body); font-weight:700; border:none; cursor:pointer; transition:all .2s cubic-bezier(.34,1.56,.64,1); letter-spacing:.01em; width:fit-content; }
+  .btn:hover { transform:translateY(-2px); }
+  .btn:active { transform:scale(.98); }
+  .btn-lg { padding:16px 28px; font-size:15px; border-radius:var(--radius-full); }
+  .btn-md { padding:12px 22px; font-size:14px; border-radius:var(--radius-full); }
+  .btn-sm { padding:8px 16px; font-size:13px; border-radius:var(--radius-full); }
+  .btn-primary { background:var(--coral); color:white; box-shadow:var(--shadow-coral); }
+  .btn-primary:hover { background:var(--coral-dark); }
+  .btn-secondary { background:var(--ink); color:white; box-shadow:var(--shadow-md); }
+  .btn-ghost { background:var(--sand); color:var(--ink); }
+  .btn-ghost:hover { background:var(--sand-dark); }
+  .btn-teal { background:var(--teal); color:var(--ink); box-shadow:var(--shadow-teal); }
+  .btn-outline { background:transparent; color:var(--coral); border:2px solid var(--coral); }
+  .btn-outline:hover { background:var(--coral-light); }
+
+  .badge { display:inline-flex; align-items:center; gap:6px; font-family:var(--font-body); font-weight:700; font-size:12px; padding:4px 12px; border-radius:var(--radius-full); }
+  .bdot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .b-coral { background:var(--coral-light); color:var(--coral-dark); } .b-coral .bdot { background:var(--coral); }
+  .b-teal  { background:var(--teal-light);  color:var(--teal-dark);  } .b-teal .bdot  { background:var(--teal); }
+  .b-plum  { background:var(--plum-light);  color:var(--plum-dark);  } .b-plum .bdot  { background:var(--plum); }
+  .b-sand  { background:var(--sand); color:var(--gray); }              .b-sand .bdot  { background:var(--gray); }
+  .b-ok    { background:#DCFCE7; color:#15803D; }                       .b-ok .bdot    { background:var(--success); }
+  .b-warn  { background:#FEF3C7; color:#B45309; }                       .b-warn .bdot  { background:var(--warning); }
+
+  .input-wrap { display:flex; flex-direction:column; gap:6px; }
+  .inp-label { font-size:13px; font-weight:700; color:var(--ink-soft); }
+  .inp { font-family:var(--font-body); font-size:14px; padding:12px 16px 12px 44px; border:2px solid var(--sand-dark); border-radius:var(--radius-md); background:white; color:var(--ink); outline:none; transition:all .15s; width:100%; }
+  .inp:focus { border-color:var(--coral); box-shadow:0 0 0 4px var(--coral-light); }
+  .inp::placeholder { color:var(--gray-light); }
+  .inp-wrap-rel { position:relative; }
+  .inp-ico { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:18px; }
+
+  .card { background:white; border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm); border:1px solid var(--sand); }
+
+  .toggle { width:48px; height:28px; background:var(--sand-dark); border-radius:var(--radius-full); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+  .toggle.on { background:var(--coral); }
+  .toggle::after { content:''; width:22px; height:22px; background:white; border-radius:50%; position:absolute; top:3px; left:3px; transition:transform .2s cubic-bezier(.34,1.56,.64,1); box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  .toggle.on::after { transform:translateX(20px); }
+
+  /* ══ MOCKUP ══ */
+  .mockup-sec { background:var(--ink); padding:80px 60px; border-bottom:none; }
+  .mockup-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:32px; align-items:start; }
+  .mock-title { color:var(--gray-light); font-size:12px; font-weight:700; text-align:center; margin-bottom:16px; text-transform:uppercase; letter-spacing:.1em; }
+
+  .phone { background:#0F0A05; border-radius:44px; padding:16px; box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08); max-width:280px; margin:0 auto; width:100%; }
+  .phone-notch { width:100px; height:28px; background:#0F0A05; border-radius:0 0 20px 20px; margin:0 auto 12px; }
+  .phone-screen { background:var(--cream); border-radius:32px; overflow:hidden; min-height:500px; }
+
+  .scr-hdr { background:var(--ink); padding:20px 20px 24px; }
+  .scr-hdr-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .scr-greeting { font-size:11px; color:var(--gray-light); font-weight:600; }
+  .scr-title { font-family:var(--font-display); font-size:22px; font-weight:700; color:white; }
+  .scr-ava { width:36px; height:36px; background:var(--coral); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:white; font-family:var(--font-body); }
+  .scr-pills { display:flex; gap:8px; }
+  .scr-pill { background:rgba(255,255,255,.1); border-radius:var(--radius-full); padding:5px 12px; font-size:11px; font-weight:700; color:white; display:flex; align-items:center; gap:5px; }
+  .scr-pill-dot { width:6px; height:6px; border-radius:50%; background:var(--teal); }
+
+  .scr-body { padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .scr-card { background:white; border-radius:14px; padding:14px; box-shadow:var(--shadow-sm); border:1px solid var(--sand); }
+  .scr-reminder { background:linear-gradient(135deg,var(--plum),var(--plum-dark)); border-radius:14px; padding:12px 14px; display:flex; align-items:center; gap:10px; }
+  .scr-rem-ico { font-size:20px; }
+  .scr-rem-text { flex:1; }
+  .scr-rem-title { font-size:12px; font-weight:700; color:white; }
+  .scr-rem-sub { font-size:10px; color:rgba(255,255,255,.7); }
+  .scr-rem-btn { background:rgba(255,255,255,.2); border:none; color:white; font-size:10px; font-weight:700; padding:5px 10px; border-radius:var(--radius-full); font-family:var(--font-body); cursor:pointer; white-space:nowrap; }
+
+  .scr-pet-row { display:flex; align-items:center; gap:10px; }
+  .scr-pet-ava { width:38px; height:38px; border-radius:10px; background:var(--sand); display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .scr-pet-name { font-size:14px; font-weight:700; color:var(--ink); }
+  .scr-pet-last { font-size:11px; color:var(--gray); }
+  .scr-gram { font-size:13px; font-weight:800; color:var(--coral); background:var(--coral-light); padding:4px 10px; border-radius:var(--radius-full); }
+  .scr-progress { height:6px; background:var(--sand); border-radius:var(--radius-full); overflow:hidden; margin-top:8px; }
+  .scr-progress-fill { height:100%; border-radius:var(--radius-full); background:linear-gradient(90deg,var(--coral),var(--coral-dark)); }
+
+  .scr-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .scr-action { background:var(--sand); border-radius:12px; padding:12px; text-align:center; }
+  .scr-action-ico { font-size:22px; margin-bottom:4px; }
+  .scr-action-lbl { font-size:11px; font-weight:700; color:var(--ink-soft); }
+
+  .scr-nav { background:white; border-top:1px solid var(--sand); display:flex; padding:10px 8px 16px; }
+  .scr-nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9px; font-weight:700; color:var(--gray-light); text-transform:uppercase; letter-spacing:.05em; }
+  .scr-nav-item.on { color:var(--coral); }
+  .scr-nav-ico { font-size:20px; }
+
+  /* ══ ICONS ══ */
+  .icons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:12px; }
+  .icon-chip { background:white; border:1px solid var(--sand); border-radius:var(--radius-md); padding:16px 12px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; transition:all .2s; }
+  .icon-chip:hover { border-color:var(--coral); transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+  .icon-em { font-size:28px; }
+  .icon-nm { font-size:10px; font-weight:700; color:var(--gray); text-transform:uppercase; letter-spacing:.08em; }
+
+  /* ══ SPACING ══ */
+  .sp-row { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; }
+  .sp-chip { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .sp-block { background:var(--coral); border-radius:4px; opacity:.8; }
+  .sp-label { font-size:11px; font-weight:700; color:var(--gray); }
+  .rad-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-top:32px; }
+  .rad-chip { width:72px; height:72px; background:white; border:2px solid var(--sand-dark); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px; }
+  .rad-label { font-size:10px; font-weight:700; color:var(--gray); text-align:center; }
+
+  @media(max-width:900px){
+    section,.mockup-sec,.hero{padding:60px 24px;}
+    .mockup-grid{grid-template-columns:1fr;max-width:320px;margin:0 auto;}
+    .comp-grid{grid-template-columns:1fr;}
+    .hero{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HERO — LOGO SHOWCASE
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-left">
+
+    <!-- LOGO PRINCIPAL -->
+    <div class="logo-main fu1">
+      <div class="logo-icon-lg anim-float">
+        <!--
+          SILHOUETTE ABSTRAITE :
+          Forme organique avec deux "bosses" asymétriques en haut
+          qui évoquent des oreilles sans appartenir à une espèce.
+          Deux cercles-yeux minimalistes.
+          Universel : fonctionne pour chat, chien, lapin, hamster...
+        -->
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Corps / tête : forme organique asymétrique -->
+          <path d="
+            M 28 48
+            C 16 48 8 40 8 30
+            C 8 22 12 16 18 13
+            C 16 10 15 6 17 4
+            C 19 2 22 4 24 8
+            C 25.3 7.5 26.6 7.2 28 7.2
+            C 30 7.2 31.8 7.7 33.4 8.6
+            C 35 4.5 38 2 40 4
+            C 42 6 41 10 39 13.5
+            C 44.5 17 48 23 48 30
+            C 48 40 40 48 28 48 Z
+          " fill="white" opacity="0.95"/>
+          <!-- Oeil gauche -->
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="22.2" cy="25.5" r="1.1" fill="white"/>
+          <!-- Oeil droit -->
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="36.2" cy="25.5" r="1.1" fill="white"/>
+          <!-- Nez minimaliste -->
+          <ellipse cx="28" cy="33" rx="2.5" ry="1.8" fill="rgba(255,255,255,0.6)"/>
+          <!-- Reflet subtil sur le corps -->
+          <ellipse cx="20" cy="20" rx="5" ry="3" fill="white" opacity="0.15" transform="rotate(-20 20 20)"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-wordmark">Flou<em>pet</em></div>
+        <div class="logo-tagline">Le compagnon de vos compagnons</div>
+      </div>
+    </div>
+
+    <!-- Fond clair -->
+    <div class="logo-light fu2">
+      <div class="logo-light-icon">
+        <svg width="30" height="30" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.95"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="22.2" cy="25.5" r="1.1" fill="white"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="36.2" cy="25.5" r="1.1" fill="white"/>
+        </svg>
+      </div>
+      <div class="logo-light-text">Flou<em>pet</em></div>
+    </div>
+
+  </div>
+
+  <!-- Variations -->
+  <div class="hero-right fu3">
+    <div class="var-label">Variations</div>
+
+    <!-- Monogramme -->
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div class="mono">
+        <svg width="32" height="32" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.9"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="22.2" cy="25.5" r="1.1" fill="white"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="36.2" cy="25.5" r="1.1" fill="white"/>
+        </svg>
+      </div>
+      <span style="color:var(--gray);font-size:12px;">Icône app store / favicon</span>
+    </div>
+
+    <!-- Horizontal teal -->
+    <div class="logo-row">
+      <div class="logo-icon-md" style="background:var(--teal);box-shadow:var(--shadow-teal);">
+        <svg width="28" height="28" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.9"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+        </svg>
+      </div>
+      <span class="wm-lg">Floupet</span>
+    </div>
+
+    <!-- Horizontal plum -->
+    <div class="logo-row">
+      <div class="logo-icon-sm" style="background:var(--plum);box-shadow:var(--shadow-plum);">
+        <svg width="22" height="22" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.9"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+        </svg>
+      </div>
+      <span class="wm-md">Floupet</span>
+    </div>
+
+    <!-- Micro -->
+    <div class="logo-row">
+      <div class="logo-icon-xs" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);">
+        <svg width="18" height="18" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.9"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+        </svg>
+      </div>
+      <span class="wm-sm" style="color:var(--gray-light);">Floupet</span>
+    </div>
+
+    <!-- Wordmark seul -->
+    <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--gray);letter-spacing:-.5px;">Floupet</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ZOOM LOGO — ANATOMIE
+══════════════════════════════════════ -->
+<section style="background:var(--sand);">
+  <div class="section-label">🔍 Anatomie du logo</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:32px;align-items:center;">
+
+    <!-- Grand -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div style="width:120px;height:120px;background:var(--coral);border-radius:36px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-coral);">
+        <svg width="76" height="76" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.95"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="22.2" cy="25.5" r="1.1" fill="white"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="36.2" cy="25.5" r="1.1" fill="white"/>
+          <ellipse cx="28" cy="33" rx="2.5" ry="1.8" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">120×120px</div>
+        <div style="font-size:11px;color:var(--gray);">App Store / Google Play</div>
+      </div>
+    </div>
+
+    <!-- Medium -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div style="width:80px;height:80px;background:var(--coral);border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-coral);">
+        <svg width="50" height="50" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.95"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="22.2" cy="25.5" r="1.1" fill="white"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <circle cx="36.2" cy="25.5" r="1.1" fill="white"/>
+        </svg>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">80×80px</div>
+        <div style="font-size:11px;color:var(--gray);">Header / Nav</div>
+      </div>
+    </div>
+
+    <!-- Small -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div style="width:48px;height:48px;background:var(--coral);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-coral);">
+        <svg width="30" height="30" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.95"/>
+          <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+          <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+        </svg>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">48×48px</div>
+        <div style="font-size:11px;color:var(--gray);">Boutons / UI</div>
+      </div>
+    </div>
+
+    <!-- Favicon -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div style="width:32px;height:32px;background:var(--coral);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 56 56" fill="none">
+          <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.95"/>
+          <ellipse cx="21" cy="27" rx="4" ry="4.5" fill="#1A1208"/>
+          <ellipse cx="35" cy="27" rx="4" ry="4.5" fill="#1A1208"/>
+        </svg>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">32×32px</div>
+        <div style="font-size:11px;color:var(--gray);">Favicon</div>
+      </div>
+    </div>
+
+    <!-- Annotations -->
+    <div style="grid-column:span 2;background:white;border-radius:var(--radius-lg);padding:24px;border:1px solid var(--sand-dark);">
+      <div style="font-weight:800;font-size:13px;color:var(--ink);margin-bottom:16px;">Concept de la silhouette</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--coral);margin-top:5px;flex-shrink:0;"></div>
+          <div style="font-size:13px;color:var(--gray);line-height:1.6;"><strong style="color:var(--ink);">Oreilles asymétriques</strong> — deux bosses organiques en haut, légèrement différentes. Évoquent un animal sans en être un précis.</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);margin-top:5px;flex-shrink:0;"></div>
+          <div style="font-size:13px;color:var(--gray);line-height:1.6;"><strong style="color:var(--ink);">Corps ovale doux</strong> — silhouette rassurante et ronde, pas agressive. Warm & friendly.</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--plum);margin-top:5px;flex-shrink:0;"></div>
+          <div style="font-size:13px;color:var(--gray);line-height:1.6;"><strong style="color:var(--ink);">Yeux minimalistes</strong> — deux ellipses avec reflet blanc. Expressifs, reconnaissables, universels.</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--warning);margin-top:5px;flex-shrink:0;"></div>
+          <div style="font-size:13px;color:var(--gray);line-height:1.6;"><strong style="color:var(--ink);">SVG pur</strong> — pas d'image, pas de dépendance. Scalable de 16px à 1000px sans perte.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     COLORS
+══════════════════════════════════════ -->
+<section>
+  <div class="section-label">🎨 Palette de couleurs</div>
+  <div class="colors-grid">
+    <div class="color-chip"><div class="color-swatch" style="background:#FF6B4A;"><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.8);">Aa</span></div><div class="color-info"><span class="color-name">Coral</span><span class="color-hex">#FF6B4A</span><span class="color-role">Primaire · CTA · Logo</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#2DD4BF;"><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.8);">Aa</span></div><div class="color-info"><span class="color-name">Teal</span><span class="color-hex">#2DD4BF</span><span class="color-role">Secondaire · Succès</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#6C3FC5;"><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.8);">Aa</span></div><div class="color-info"><span class="color-name">Plum</span><span class="color-hex">#6C3FC5</span><span class="color-role">Tertiaire · Alertes</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#1A1208;"><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);">Aa</span></div><div class="color-info"><span class="color-name">Ink</span><span class="color-hex">#1A1208</span><span class="color-role">Texte · Dark bg</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#FDF8F2;"><span style="font-size:11px;font-weight:700;color:var(--gray);">Aa</span></div><div class="color-info"><span class="color-name">Cream</span><span class="color-hex">#FDF8F2</span><span class="color-role">Background</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#F5EDE0;"><span style="font-size:11px;font-weight:700;color:var(--gray);">Aa</span></div><div class="color-info"><span class="color-name">Sand</span><span class="color-hex">#F5EDE0</span><span class="color-role">Surfaces · Cards</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#8A7E72;"><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.8);">Aa</span></div><div class="color-info"><span class="color-name">Gray</span><span class="color-hex">#8A7E72</span><span class="color-role">Texte secondaire</span></div></div>
+    <div class="color-chip"><div class="color-swatch" style="background:#FFE8E2;"><span style="font-size:11px;font-weight:700;color:var(--coral);">Aa</span></div><div class="color-info"><span class="color-name">Coral Light</span><span class="color-hex">#FFE8E2</span><span class="color-role">Badges · Highlights</span></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TYPOGRAPHY
+══════════════════════════════════════ -->
+<section>
+  <div class="section-label">✍️ Typographie</div>
+  <div class="type-grid">
+    <div class="type-row">
+      <div><div class="type-meta-name">Display</div><div class="type-meta-detail">Fraunces 700<br>Serif organique<br>Titres & logo</div></div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:52px;font-weight:700;color:var(--ink);line-height:1.1;letter-spacing:-1px;">Vos animaux méritent le meilleur.</div>
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--gray);margin-top:8px;font-style:italic;">Suivez-les avec Floupet.</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div><div class="type-meta-name">Headings</div><div class="type-meta-detail">Fraunces 700<br>36 / 28 / 22px<br>Sections</div></div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:var(--ink);">Journal alimentaire</div>
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--ink);margin-top:8px;">Suivi du poids</div>
+        <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:500;color:var(--ink);margin-top:8px;">Carnet de santé</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div><div class="type-meta-name">Body</div><div class="type-meta-detail">Nunito<br>16 / 14 / 12px<br>UI & contenu</div></div>
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:400;color:var(--ink);line-height:1.7;">Floupet vous aide à prendre soin de tous vos animaux au quotidien. Chiens, chats, lapins, hamsters — chaque compagnon a son suivi personnalisé.</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:var(--gray);margin-top:12px;">Il y a 2 heures · 85 g de Royal Canin</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--coral);margin-top:8px;">Total du jour · 245 g</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     COMPONENTS
+══════════════════════════════════════ -->
+<section>
+  <div class="section-label">🧩 Composants UI</div>
+  <div class="comp-grid">
+
+    <div class="comp-group">
+      <div class="comp-label">Boutons</div>
+      <button class="btn btn-primary btn-lg">+ Ajouter un repas</button>
+      <button class="btn btn-secondary btn-md">Voir l'historique</button>
+      <button class="btn btn-ghost btn-md">Annuler</button>
+      <button class="btn btn-teal btn-md">✓ Médicament pris</button>
+      <button class="btn btn-outline btn-md">📷 Scanner un produit</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary btn-sm">Enregistrer</button>
+        <button class="btn btn-ghost btn-sm">Annuler</button>
+      </div>
+    </div>
+
+    <div class="comp-group">
+      <div class="comp-label">Badges & statuts</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span class="badge b-coral"><span class="bdot"></span>Repas enregistré</span>
+        <span class="badge b-teal"><span class="bdot"></span>Médicament pris</span>
+        <span class="badge b-plum"><span class="bdot"></span>RDV véto</span>
+        <span class="badge b-sand"><span class="bdot"></span>Non vérifié</span>
+        <span class="badge b-ok"><span class="bdot"></span>Vaccin à jour</span>
+        <span class="badge b-warn"><span class="bdot"></span>Rappel bientôt</span>
+      </div>
+    </div>
+
+    <div class="comp-group">
+      <div class="comp-label">Saisie</div>
+      <div class="input-wrap">
+        <label class="inp-label">Quantité (grammes)</label>
+        <div class="inp-wrap-rel"><span class="inp-ico">⚖️</span><input class="inp" type="number" placeholder="85"></div>
+      </div>
+      <div class="input-wrap">
+        <label class="inp-label">Produit</label>
+        <div class="inp-wrap-rel"><span class="inp-ico">🔍</span><input class="inp" placeholder="Royal Canin..."></div>
+      </div>
+    </div>
+
+    <div class="comp-group">
+      <div class="comp-label">Carte animal</div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;border-radius:14px;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:28px;">🐶</div>
+          <div style="flex:1;">
+            <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);">Pixel</div>
+            <div style="font-size:13px;color:var(--gray);margin-top:2px;">Chien · 5 ans · Mâle</div>
+          </div>
+          <span class="badge b-teal"><span class="bdot"></span>Actif</span>
+        </div>
+        <div style="display:flex;gap:20px;margin-top:16px;padding-top:16px;border-top:1px solid var(--sand);">
+          <div><div style="font-size:18px;font-weight:800;color:var(--ink);">320 g</div><div style="font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Aujourd'hui</div></div>
+          <div><div style="font-size:18px;font-weight:800;color:var(--ink);">12,4 kg</div><div style="font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Poids</div></div>
+          <div><div style="font-size:18px;font-weight:800;color:var(--success);">Stable</div><div style="font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Tendance</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-group">
+      <div class="comp-label">Espèces supportées</div>
+      <div class="card" style="padding:16px 20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;">Tous vos animaux</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div style="text-align:center;"><div style="font-size:28px;">🐱</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Chat</div></div>
+          <div style="text-align:center;"><div style="font-size:28px;">🐶</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Chien</div></div>
+          <div style="text-align:center;"><div style="font-size:28px;">🐰</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Lapin</div></div>
+          <div style="text-align:center;"><div style="font-size:28px;">🐹</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Hamster</div></div>
+          <div style="text-align:center;"><div style="font-size:28px;">🐦</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Oiseau</div></div>
+          <div style="text-align:center;"><div style="font-size:28px;">🐠</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Poisson</div></div>
+          <div style="text-align:center;"><div style="font-size:28px;">🦎</div><div style="font-size:11px;color:var(--gray);font-weight:700;margin-top:4px;">Reptile</div></div>
+          <div style="text-align:center;background:var(--sand);border-radius:10px;padding:6px 0;"><div style="font-size:22px;">+</div><div style="font-size:10px;color:var(--gray);font-weight:700;margin-top:2px;">Autre</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-group">
+      <div class="comp-label">Toggles</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:12px;"><div class="toggle on"></div><span style="font-size:14px;font-weight:600;color:var(--ink-soft);">Rappels médicaments</span></div>
+        <div style="display:flex;align-items:center;gap:12px;"><div class="toggle on"></div><span style="font-size:14px;font-weight:600;color:var(--ink-soft);">Rappels vaccins</span></div>
+        <div style="display:flex;align-items:center;gap:12px;"><div class="toggle"></div><span style="font-size:14px;font-weight:600;color:var(--ink-soft);">Rappels pesée</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     MOCKUPS
+══════════════════════════════════════ -->
+<section class="mockup-sec">
+  <div class="section-label" style="color:var(--gray);">📱 Aperçu app</div>
+  <div class="mockup-grid">
+
+    <!-- Dashboard -->
+    <div>
+      <div class="mock-title">Dashboard</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="scr-hdr">
+            <div class="scr-hdr-top">
+              <div><div class="scr-greeting">Bonjour Marie 👋</div><div class="scr-title">Aujourd'hui</div></div>
+              <div class="scr-ava">M</div>
+            </div>
+            <div class="scr-pills">
+              <div class="scr-pill"><span class="scr-pill-dot"></span>3 animaux</div>
+              <div class="scr-pill">5 repas</div>
+            </div>
+          </div>
+          <div class="scr-body">
+            <div class="scr-reminder">
+              <div class="scr-rem-ico">💊</div>
+              <div class="scr-rem-text"><div class="scr-rem-title">Médicament — Mochi</div><div class="scr-rem-sub">Antibiotique · dans 30 min</div></div>
+              <button class="scr-rem-btn">Voir</button>
+            </div>
+            <div class="scr-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div class="scr-pet-row"><div class="scr-pet-ava">🐱</div><div><div class="scr-pet-name">Mochi</div><div class="scr-pet-last">Il y a 2h</div></div></div>
+                <div class="scr-gram">245 g</div>
+              </div>
+              <div class="scr-progress"><div class="scr-progress-fill" style="width:82%;"></div></div>
+            </div>
+            <div class="scr-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div class="scr-pet-row"><div class="scr-pet-ava">🐶</div><div><div class="scr-pet-name">Pixel</div><div class="scr-pet-last">Il y a 4h</div></div></div>
+                <div class="scr-gram">180 g</div>
+              </div>
+              <div class="scr-progress"><div class="scr-progress-fill" style="width:56%;"></div></div>
+            </div>
+            <div class="scr-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div class="scr-pet-row"><div class="scr-pet-ava">🐰</div><div><div class="scr-pet-name">Noisette</div><div class="scr-pet-last">Il y a 1h</div></div></div>
+                <div class="scr-gram">45 g</div>
+              </div>
+              <div class="scr-progress"><div class="scr-progress-fill" style="width:90%;"></div></div>
+            </div>
+            <div class="scr-actions">
+              <div class="scr-action"><div class="scr-action-ico">🍽️</div><div class="scr-action-lbl">+ Repas</div></div>
+              <div class="scr-action"><div class="scr-action-ico">⚖️</div><div class="scr-action-lbl">+ Poids</div></div>
+            </div>
+          </div>
+          <div class="scr-nav">
+            <div class="scr-nav-item on"><span class="scr-nav-ico">🏠</span>Home</div>
+            <div class="scr-nav-item"><span class="scr-nav-ico">🐾</span>Animaux</div>
+            <div class="scr-nav-item"><span class="scr-nav-ico">🍽️</span>Repas</div>
+            <div class="scr-nav-item"><span class="scr-nav-ico">❤️</span>Santé</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add meal -->
+    <div>
+      <div class="mock-title">Ajouter un repas</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="scr-hdr" style="padding-bottom:20px;">
+            <div class="scr-hdr-top">
+              <div><div class="scr-greeting">Noisette · Lapin</div><div class="scr-title">Nouveau repas</div></div>
+              <div style="font-size:24px;">🐰</div>
+            </div>
+          </div>
+          <div class="scr-body">
+            <div class="scr-card">
+              <div style="font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Produit</div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--sand);border-radius:10px;">
+                <span style="font-size:20px;">📦</span>
+                <div><div style="font-size:13px;font-weight:700;color:var(--ink);">Oxbow Garden Select</div><div style="font-size:11px;color:var(--gray);">Granulés lapin · 1.8kg</div></div>
+                <span class="badge b-teal" style="margin-left:auto;font-size:10px;">✓</span>
+              </div>
+              <div style="text-align:center;padding:8px;font-size:11px;color:var(--coral);font-weight:700;cursor:pointer;">📷 Scanner un produit</div>
+            </div>
+            <div class="scr-card">
+              <div style="font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Quantité</div>
+              <div style="display:flex;gap:8px;margin-bottom:10px;">
+                <button style="flex:1;padding:10px;background:var(--coral);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Grammes</button>
+                <button style="flex:1;padding:10px;background:var(--sand);color:var(--gray);border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Portions</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+                <button style="width:40px;height:40px;border-radius:50%;background:var(--sand);border:none;font-size:20px;cursor:pointer;">−</button>
+                <div style="text-align:center;">
+                  <span style="font-family:'Fraunces',serif;font-size:42px;font-weight:700;color:var(--coral);">45</span>
+                  <span style="font-size:16px;color:var(--gray);font-weight:600;"> g</span>
+                </div>
+                <button style="width:40px;height:40px;border-radius:50%;background:var(--coral);border:none;font-size:20px;cursor:pointer;color:white;">+</button>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">✓ Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health -->
+    <div>
+      <div class="mock-title">Suivi santé</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="scr-hdr" style="padding-bottom:20px;">
+            <div class="scr-hdr-top">
+              <div><div class="scr-greeting">Pixel · 12,4 kg</div><div class="scr-title">Santé</div></div>
+              <div style="font-size:24px;">❤️</div>
+            </div>
+          </div>
+          <div class="scr-body">
+            <div class="scr-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span style="font-size:13px;font-weight:700;color:var(--ink);">Évolution du poids</span>
+                <span class="badge b-ok" style="font-size:10px;"><span class="bdot"></span>Stable</span>
+              </div>
+              <svg viewBox="0 0 220 60" style="width:100%;height:60px;">
+                <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF6B4A" stop-opacity=".3"/><stop offset="100%" stop-color="#FF6B4A" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,35 C30,34 60,36 90,33 C120,30 150,32 180,30 C200,28 220,29 220,29" fill="url(#g)"/>
+                <path d="M0,35 C30,34 60,36 90,33 C120,30 150,32 180,30 C200,28 220,29 220,29" fill="none" stroke="#FF6B4A" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="220" cy="29" r="4" fill="#FF6B4A"/>
+              </svg>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-top:4px;"><span>Jan</span><span>Fév</span></div>
+            </div>
+            <div class="scr-card">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px;">💊 Médicaments</div>
+              <div style="padding:10px;background:var(--plum-light);border-radius:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div><div style="font-size:13px;font-weight:700;color:var(--plum-dark);">Antiparasitaire</div><div style="font-size:11px;color:var(--gray);">1x / mois</div></div>
+                  <button style="background:var(--plum);color:white;border:none;padding:6px 12px;border-radius:var(--radius-full);font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✓ Donné</button>
+                </div>
+              </div>
+            </div>
+            <div class="scr-card" style="padding:14px;">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px;">💉 Vaccins</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-size:12px;font-weight:700;color:var(--ink);">Rage / Carré / Parvo</div><div style="font-size:11px;color:var(--gray);">Rappel : Nov 2026</div></div>
+                <span class="badge b-ok" style="font-size:10px;"><span class="bdot"></span>OK</span>
+              </div>
+            </div>
+          </div>
+          <div class="scr-nav">
+            <div class="scr-nav-item"><span class="scr-nav-ico">🏠</span>Home</div>
+            <div class="scr-nav-item"><span class="scr-nav-ico">🐾</span>Animaux</div>
+            <div class="scr-nav-item"><span class="scr-nav-ico">🍽️</span>Repas</div>
+            <div class="scr-nav-item on"><span class="scr-nav-ico">❤️</span>Santé</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<section style="background:var(--ink);border:none;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding:40px 60px;">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div style="width:40px;height:40px;background:var(--coral);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-coral);">
+      <svg width="26" height="26" viewBox="0 0 56 56" fill="none">
+        <path d="M28 48C16 48 8 40 8 30C8 22 12 16 18 13C16 10 15 6 17 4C19 2 22 4 24 8C25.3 7.5 26.6 7.2 28 7.2C30 7.2 31.8 7.7 33.4 8.6C35 4.5 38 2 40 4C42 6 41 10 39 13.5C44.5 17 48 23 48 30C48 40 40 48 28 48Z" fill="white" opacity="0.95"/>
+        <ellipse cx="21" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+        <ellipse cx="35" cy="27" rx="3.2" ry="3.5" fill="#1A1208"/>
+      </svg>
+    </div>
+    <span style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:#FFFCF8;letter-spacing:-.5px;">Floupet</span>
+  </div>
+  <div style="color:var(--gray);font-size:13px;">Design System v1.1 · Logo universel · Février 2026</div>
+</section>
+
+</body>
+</html>
