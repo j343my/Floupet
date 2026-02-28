@@ -1,0 +1,26 @@
+{
+  "name": "Floupet",
+  "short_name": "Floupet",
+  "description": "Le compagnon de vos compagnons",
+  "start_url": "/fr/app",
+  "display": "standalone",
+  "background_color": "#FDF6EE",
+  "theme_color": "#FF6B4A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "apple touch icon"
+    }
+  ],
+  "categories": ["health", "lifestyle"],
+  "lang": "fr"
+}

@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import AppLayout from "../../AppLayout";
 import PetForm from "../PetForm";
 import DeletePetBtn from "../DeletePetBtn";
+import PetFeedingSummary from "./PetFeedingSummary";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -34,11 +35,9 @@ export default async function PetDetailPage({
         redirect(`/${locale}/app/auth`);
     }
 
-    // Get current household from cookie
     const cookieStore = await cookies();
     const householdId = cookieStore.get('floupet_current_household_id')?.value;
 
-    // Fetch memberships to confirm access
     const { data: memberships } = await supabase
         .from('memberships')
         .select('household_id, role')
@@ -53,8 +52,8 @@ export default async function PetDetailPage({
         : memberships[0].household_id;
 
     const currentMembership = memberships.find(m => m.household_id === currentHouseholdId);
+    const userRole = currentMembership?.role ?? 'member';
 
-    // Fetch pet
     const { data: pet, error } = await supabase
         .from('pets')
         .select('*')
@@ -66,7 +65,14 @@ export default async function PetDetailPage({
         notFound();
     }
 
-    const canEdit = currentMembership?.role === 'owner' || currentMembership?.role === 'admin';
+    const { data: allPets } = await supabase
+        .from('pets')
+        .select('id, name, species, photo_url, household_id')
+        .eq('household_id', currentHouseholdId)
+        .is('archived_at', null)
+        .order('name');
+
+    const canEdit = userRole === 'owner' || userRole === 'admin';
 
     if (isEditing && !canEdit) {
         redirect(`/${locale}/app/pets/${id}`);
@@ -148,7 +154,6 @@ export default async function PetDetailPage({
                         </header>
 
                         <div className="grid gap-6 md:grid-cols-3">
-                            {/* Summary Cards */}
                             <div className="rounded-[var(--radius-lg)] border border-sand bg-white p-6 shadow-[var(--shadow-sm)]">
                                 <div className="text-[10px] font-bold uppercase tracking-wider text-gray-light">Sexe</div>
                                 <div className="mt-1 text-lg font-bold text-ink">{tPets(`sexOptions.${pet.sex}`)}</div>
@@ -170,14 +175,14 @@ export default async function PetDetailPage({
                             </section>
                         )}
 
-                        {/* Placeholder for future features */}
-                        <section className="mt-4 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-sand bg-warm-white/50 py-16 text-center">
-                            <span className="text-4xl">⏳</span>
-                            <h3 className="mt-4 font-display text-xl font-bold text-ink">Journal bientôt disponible</h3>
-                            <p className="mt-2 text-sm text-gray max-w-xs text-center">
-                                Le suivi des repas, du poids et de la santé arrive dans les prochaines phases.
-                            </p>
-                        </section>
+                        <PetFeedingSummary
+                            pet={pet}
+                            householdId={currentHouseholdId}
+                            currentUserId={user.id}
+                            userRole={userRole}
+                            locale={locale}
+                            allPets={allPets ?? []}
+                        />
                     </>
                 )}
             </div>
