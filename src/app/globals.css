@@ -1,12 +1,16 @@
+@import '@fontsource-variable/nunito';
+@import '@fontsource-variable/fraunces';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&display=swap');
-
 /* ── Floupet Design System — CSS Variables ─────── */
 
 :root {
+  --font-nunito: 'Nunito Variable', sans-serif;
+  --font-fraunces: 'Fraunces Variable', Georgia, serif;
+
   /* Neutrals */
   --cream: #FDF8F2;
   --warm-white: #FFFCF8;
@@ -56,7 +60,7 @@
 body {
   background: var(--cream);
   color: var(--ink);
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-nunito);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

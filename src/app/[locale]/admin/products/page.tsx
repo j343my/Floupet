@@ -60,7 +60,7 @@ export default async function AdminProductsPage() {
                                         {product.barcode || "-"}
                                     </td>
                                     <td className="px-6 py-4 text-gray">
-                                        {product.profiles?.full_name || "Système"}
+                                        {(product.profiles as unknown as { full_name: string } | null)?.full_name || "Système"}
                                     </td>
                                     <td className="px-6 py-4">
                                         {product.verified ? (
