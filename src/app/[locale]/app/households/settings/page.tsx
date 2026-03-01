@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import AppLayout from "../../AppLayout";
 import InviteMemberForm from "./InviteMemberForm";
+import RenameHouseholdForm from "./RenameHouseholdForm";
+import RemoveMemberBtn from "./RemoveMemberBtn";
+import CancelInvitationBtn from "./CancelInvitationBtn";
 
 export async function generateMetadata() {
     return { title: "Paramètres du foyer — Floupet" };
@@ -71,10 +74,14 @@ export default async function HouseholdSettingsPage({ params }: { params: Promis
         <AppLayout locale={locale}>
             <div className="flex flex-col gap-8">
                 <header>
-                    <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
-                        {household?.name ?? 'Foyer'}
-                    </h1>
-                    <p className="text-sm text-gray-500">Paramètres et gestion des membres</p>
+                    {canManage ? (
+                        <RenameHouseholdForm initialName={household?.name ?? 'Foyer'} />
+                    ) : (
+                        <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+                            {household?.name ?? 'Foyer'}
+                        </h1>
+                    )}
+                    <p className="text-sm text-gray-500 mt-1">Paramètres et gestion des membres</p>
                 </header>
 
                 {/* Members list */}
@@ -86,6 +93,8 @@ export default async function HouseholdSettingsPage({ params }: { params: Promis
                         {members?.map((m: any) => {
                             const profile = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
                             const isMe = m.user_id === user.id;
+                            const canRemove = canManage && !isMe && m.role !== 'owner' &&
+                                !(userRole === 'admin' && m.role === 'admin');
                             return (
                                 <li key={m.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0 gap-3">
                                     <div className="flex items-center gap-3 min-w-0">
@@ -102,9 +111,17 @@ export default async function HouseholdSettingsPage({ params }: { params: Promis
                                             )}
                                         </div>
                                     </div>
-                                    <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${ROLE_COLORS[m.role] ?? 'bg-sand text-gray'}`}>
-                                        {ROLE_LABELS[m.role] ?? m.role}
-                                    </span>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${ROLE_COLORS[m.role] ?? 'bg-sand text-gray'}`}>
+                                            {ROLE_LABELS[m.role] ?? m.role}
+                                        </span>
+                                        {canRemove && (
+                                            <RemoveMemberBtn
+                                                userId={m.user_id}
+                                                memberName={profile?.full_name || profile?.email || 'ce membre'}
+                                            />
+                                        )}
+                                    </div>
                                 </li>
                             );
                         })}
@@ -126,9 +143,17 @@ export default async function HouseholdSettingsPage({ params }: { params: Promis
                                             Invité le {new Date(inv.created_at).toLocaleDateString('fr-FR')}
                                         </p>
                                     </div>
-                                    <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${ROLE_COLORS[inv.role] ?? 'bg-sand text-gray'}`}>
-                                        {ROLE_LABELS[inv.role] ?? inv.role}
-                                    </span>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <span className={`rounded-full px-3 py-1 text-xs font-bold ${ROLE_COLORS[inv.role] ?? 'bg-sand text-gray'}`}>
+                                            {ROLE_LABELS[inv.role] ?? inv.role}
+                                        </span>
+                                        {canManage && (
+                                            <CancelInvitationBtn
+                                                invitationId={inv.id}
+                                                email={inv.email}
+                                            />
+                                        )}
+                                    </div>
                                 </li>
                             ))}
                         </ul>
