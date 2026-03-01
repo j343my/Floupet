@@ -13,6 +13,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [hasCameras, setHasCameras] = useState<boolean | null>(null);
+    const [cameras, setCameras] = useState<Array<{ id: string; label: string }>>([]);
     const [error, setError] = useState<string | null>(null);
     const [scanResult, setScanResult] = useState<string | null>(null);
     const [debugInfo, setDebugInfo] = useState<{
@@ -35,6 +36,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
         Html5Qrcode.getCameras()
             .then((devices) => {
                 if (devices && devices.length > 0) {
+                    setCameras(devices);
                     setHasCameras(true);
                     if (debug) {
                         const labels = devices.map((d) => d.label || `id:${d.id}`).join(", ");
@@ -58,6 +60,19 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
         };
     }, [debug]);
 
+    // Sélectionne la caméra arrière par ID pour éviter les problèmes de facingMode sur iOS
+    const pickRearCamera = (): string | { facingMode: string } => {
+        if (cameras.length === 0) return { facingMode: "environment" };
+        const rear = cameras.find((c) => {
+            const label = c.label.toLowerCase();
+            return label.includes("arrière") || label.includes("back") || label.includes("rear") || label.includes("environment");
+        }) ?? cameras.find((c) => {
+            const label = c.label.toLowerCase();
+            return !label.includes("avant") && !label.includes("front") && !label.includes("selfie") && !label.includes("facetime");
+        }) ?? cameras[cameras.length - 1];
+        return rear ? rear.id : { facingMode: "environment" };
+    };
+
     const startScanning = async () => {
         if (!hasCameras || isScanning) return;
 
@@ -65,6 +80,8 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
         setScanResult(null);
         setDebugInfo((prev) => ({ ...prev, scanAttempts: 0 }));
         try {
+            // useBarCodeDetectorIfSupported désactivé : l'API native BarcodeDetector
+            // n'est pas supportée sur iOS Safari et cause l'échec silencieux du scan.
             scannerRef.current = new Html5Qrcode("reader", {
                 verbose: false,
                 formatsToSupport: [
@@ -78,19 +95,19 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
                     Html5QrcodeSupportedFormats.CODABAR,
                     Html5QrcodeSupportedFormats.QR_CODE,
                 ],
-                useBarCodeDetectorIfSupported: true,
             });
 
+            const cameraIdOrConfig = pickRearCamera();
+
             await scannerRef.current.start(
-                // facingMode "environment" = caméra arrière (fiable sans permission préalable)
-                { facingMode: "environment" },
+                cameraIdOrConfig,
                 {
-                    fps: 12,
+                    fps: 10,
                     aspectRatio: 1.7777778,
                     qrbox: (viewfinderWidth, viewfinderHeight) => {
                         const size = {
                             width: Math.floor(viewfinderWidth * 0.88),
-                            height: Math.floor(viewfinderHeight * 0.50),
+                            height: Math.floor(viewfinderHeight * 0.40),
                         };
                         if (debug) setDebugInfo((prev) => ({ ...prev, qrboxSize: size }));
                         return size;
@@ -167,7 +184,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
 
                         {debug && (
                             <div className="pointer-events-none absolute right-2 top-2 rounded-lg bg-black/70 px-2 py-1 text-left font-mono text-[10px] text-green-400">
-                                <div>📷 env (arrière)</div>
+                                <div>📷 {typeof pickRearCamera() === "string" ? `id:${pickRearCamera()}` : "env (facingMode)"}</div>
                                 <div>📐 {debugInfo.qrboxSize ? `${debugInfo.qrboxSize.width}×${debugInfo.qrboxSize.height}` : "—"}</div>
                                 <div>🔄 tentatives: {debugInfo.scanAttempts}</div>
                                 <div className="max-w-[160px] truncate">🎥 {debugInfo.cameraLabel}</div>
