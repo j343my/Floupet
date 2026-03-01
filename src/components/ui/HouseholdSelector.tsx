@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface Household {
     id: string;
@@ -12,16 +12,14 @@ interface Household {
 export default function HouseholdSelector({
     currentHousehold,
     households,
+    locale,
 }: {
     currentHousehold: Household;
     households: Household[];
+    locale: string;
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    const pathname = usePathname();
     const router = useRouter();
-
-    // Extract locale from pathname
-    const locale = pathname?.split('/')[1] ?? 'fr';
 
     async function switchHousehold(householdId: string) {
         await fetch('/api/households/switch', {

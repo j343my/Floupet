@@ -91,6 +91,7 @@ export default async function AppLayout({
                     <HouseholdSelector
                         currentHousehold={currentHousehold}
                         households={allHouseholds}
+                        locale={locale}
                     />
                 </div>
             </aside>
@@ -101,6 +102,7 @@ export default async function AppLayout({
                     <HouseholdSelector
                         currentHousehold={currentHousehold}
                         households={allHouseholds}
+                        locale={locale}
                     />
                     <Link
                         href={`/${locale}/app/profile`}
