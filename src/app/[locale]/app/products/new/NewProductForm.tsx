@@ -84,6 +84,7 @@ export default function NewProductForm({ locale, translations }: { locale: strin
                     <BarcodeScanner
                         onScanSuccess={handleScanSuccess}
                         onScanFailure={(err) => console.log("Scan failed:", err)}
+                        debug={process.env.NODE_ENV === "development"}
                     />
                     <div className="mt-4 text-center">
                         <button

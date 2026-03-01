@@ -6,15 +6,20 @@ import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 interface BarcodeScannerProps {
     onScanSuccess: (decodedText: string) => void;
     onScanFailure?: (errorMessage: string) => void;
+    debug?: boolean;
 }
 
-export default function BarcodeScanner({ onScanSuccess, onScanFailure }: BarcodeScannerProps) {
+export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = false }: BarcodeScannerProps) {
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [hasCameras, setHasCameras] = useState<boolean | null>(null);
-    const [preferredCameraId, setPreferredCameraId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [scanResult, setScanResult] = useState<string | null>(null);
+    const [debugInfo, setDebugInfo] = useState<{
+        scanAttempts: number;
+        qrboxSize: { width: number; height: number } | null;
+        cameraLabel: string;
+    }>({ scanAttempts: 0, qrboxSize: null, cameraLabel: "—" });
 
     const clearScanner = () => {
         if (!scannerRef.current) return;
@@ -31,11 +36,10 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
             .then((devices) => {
                 if (devices && devices.length > 0) {
                     setHasCameras(true);
-
-                    const backCamera = devices.find((device) =>
-                        /back|rear|environment/i.test(device.label)
-                    );
-                    setPreferredCameraId(backCamera?.id || devices[0].id);
+                    if (debug) {
+                        const labels = devices.map((d) => d.label || `id:${d.id}`).join(", ");
+                        setDebugInfo((prev) => ({ ...prev, cameraLabel: `[${labels}]` }));
+                    }
                 } else {
                     setHasCameras(false);
                     setError("Aucune caméra détéctée.");
@@ -52,13 +56,14 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                 clearScanner();
             }
         };
-    }, []);
+    }, [debug]);
 
     const startScanning = async () => {
         if (!hasCameras || isScanning) return;
 
         setError(null);
         setScanResult(null);
+        setDebugInfo((prev) => ({ ...prev, scanAttempts: 0 }));
         try {
             scannerRef.current = new Html5Qrcode("reader", {
                 verbose: false,
@@ -76,19 +81,20 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                 useBarCodeDetectorIfSupported: true,
             });
 
-            const cameraConfig = preferredCameraId
-                ? { deviceId: { exact: preferredCameraId } }
-                : { facingMode: "environment" };
-
             await scannerRef.current.start(
-                cameraConfig,
+                // facingMode "environment" = caméra arrière (fiable sans permission préalable)
+                { facingMode: "environment" },
                 {
                     fps: 12,
                     aspectRatio: 1.7777778,
-                    qrbox: (viewfinderWidth, viewfinderHeight) => ({
-                        width: Math.floor(viewfinderWidth * 0.88),
-                        height: Math.floor(viewfinderHeight * 0.35),
-                    }),
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        const size = {
+                            width: Math.floor(viewfinderWidth * 0.88),
+                            height: Math.floor(viewfinderHeight * 0.50),
+                        };
+                        if (debug) setDebugInfo((prev) => ({ ...prev, qrboxSize: size }));
+                        return size;
+                    },
                 },
                 (decodedText) => {
                     if (scannerRef.current) {
@@ -104,6 +110,9 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                     }
                 },
                 (errorMessage) => {
+                    if (debug) {
+                        setDebugInfo((prev) => ({ ...prev, scanAttempts: prev.scanAttempts + 1 }));
+                    }
                     if (onScanFailure) onScanFailure(errorMessage);
                 }
             );
@@ -155,6 +164,15 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                             </span>
                             <span className="text-xs font-bold text-white">Scan en cours…</span>
                         </div>
+
+                        {debug && (
+                            <div className="pointer-events-none absolute right-2 top-2 rounded-lg bg-black/70 px-2 py-1 text-left font-mono text-[10px] text-green-400">
+                                <div>📷 env (arrière)</div>
+                                <div>📐 {debugInfo.qrboxSize ? `${debugInfo.qrboxSize.width}×${debugInfo.qrboxSize.height}` : "—"}</div>
+                                <div>🔄 tentatives: {debugInfo.scanAttempts}</div>
+                                <div className="max-w-[160px] truncate">🎥 {debugInfo.cameraLabel}</div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
