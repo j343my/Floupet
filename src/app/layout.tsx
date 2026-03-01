@@ -1,19 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito, Fraunces } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  variable: "--font-nunito",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   themeColor: "#FF6B4A",
@@ -45,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${nunito.variable} ${fraunces.variable}`}>
+    <html lang="fr">
       <head>
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="mask-icon" href="/logo-icon.svg" color="#FF6B4A" />
