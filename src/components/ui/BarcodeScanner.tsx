@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 interface BarcodeScannerProps {
     onScanSuccess: (decodedText: string) => void;
@@ -12,6 +12,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [hasCameras, setHasCameras] = useState<boolean | null>(null);
+    const [preferredCameraId, setPreferredCameraId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [scanResult, setScanResult] = useState<string | null>(null);
 
@@ -20,6 +21,11 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
             .then((devices) => {
                 if (devices && devices.length > 0) {
                     setHasCameras(true);
+
+                    const backCamera = devices.find((device) =>
+                        /back|rear|environment/i.test(device.label)
+                    );
+                    setPreferredCameraId(backCamera?.id || devices[0].id);
                 } else {
                     setHasCameras(false);
                     setError("Aucune caméra détéctée.");
@@ -33,27 +39,51 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
         return () => {
             if (scannerRef.current) {
                 scannerRef.current.stop().catch(console.error);
+                scannerRef.current.clear().catch(console.error);
             }
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const startScanning = async () => {
-        if (!hasCameras) return;
+        if (!hasCameras || isScanning) return;
 
         setError(null);
         setScanResult(null);
         try {
-            scannerRef.current = new Html5Qrcode("reader");
+            scannerRef.current = new Html5Qrcode("reader", { verbose: false });
+
+            const cameraConfig = preferredCameraId
+                ? { deviceId: { exact: preferredCameraId } }
+                : { facingMode: "environment" };
+
             await scannerRef.current.start(
-                { facingMode: "environment" },
+                cameraConfig,
                 {
-                    fps: 10,
-                    qrbox: { width: 250, height: 150 },
+                    fps: 12,
+                    aspectRatio: 1.7777778,
+                    qrbox: (viewfinderWidth, viewfinderHeight) => ({
+                        width: Math.floor(viewfinderWidth * 0.88),
+                        height: Math.floor(viewfinderHeight * 0.35),
+                    }),
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.CODE_39,
+                        Html5QrcodeSupportedFormats.ITF,
+                        Html5QrcodeSupportedFormats.CODABAR,
+                        Html5QrcodeSupportedFormats.QR_CODE,
+                    ],
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true,
+                    },
                 },
                 (decodedText) => {
                     if (scannerRef.current) {
                         scannerRef.current.stop().then(() => {
+                            scannerRef.current?.clear().catch(console.error);
                             setScanResult(decodedText);
                             setIsScanning(false);
                             // Vibration tactile si supportée
@@ -80,6 +110,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
         if (scannerRef.current && isScanning) {
             try {
                 await scannerRef.current.stop();
+                await scannerRef.current.clear();
                 setIsScanning(false);
             } catch (err) {
                 console.error(err);
