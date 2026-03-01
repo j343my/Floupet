@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 interface BarcodeScannerProps {
     onScanSuccess: (decodedText: string) => void;
@@ -12,14 +12,30 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [hasCameras, setHasCameras] = useState<boolean | null>(null);
+    const [preferredCameraId, setPreferredCameraId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [scanResult, setScanResult] = useState<string | null>(null);
+
+    const clearScanner = () => {
+        if (!scannerRef.current) return;
+
+        try {
+            scannerRef.current.clear();
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     useEffect(() => {
         Html5Qrcode.getCameras()
             .then((devices) => {
                 if (devices && devices.length > 0) {
                     setHasCameras(true);
+
+                    const backCamera = devices.find((device) =>
+                        /back|rear|environment/i.test(device.label)
+                    );
+                    setPreferredCameraId(backCamera?.id || devices[0].id);
                 } else {
                     setHasCameras(false);
                     setError("Aucune caméra détéctée.");
@@ -33,32 +49,54 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
         return () => {
             if (scannerRef.current) {
                 scannerRef.current.stop().catch(console.error);
+                clearScanner();
             }
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const startScanning = async () => {
-        if (!hasCameras) return;
+        if (!hasCameras || isScanning) return;
 
         setError(null);
         setScanResult(null);
         try {
-            scannerRef.current = new Html5Qrcode("reader");
+            scannerRef.current = new Html5Qrcode("reader", {
+                verbose: false,
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.ITF,
+                    Html5QrcodeSupportedFormats.CODABAR,
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                ],
+                useBarCodeDetectorIfSupported: true,
+            });
+
+            const cameraConfig = preferredCameraId
+                ? { deviceId: { exact: preferredCameraId } }
+                : { facingMode: "environment" };
+
             await scannerRef.current.start(
-                { facingMode: "environment" },
+                cameraConfig,
                 {
-                    fps: 10,
-                    qrbox: { width: 250, height: 150 },
+                    fps: 12,
+                    aspectRatio: 1.7777778,
+                    qrbox: (viewfinderWidth, viewfinderHeight) => ({
+                        width: Math.floor(viewfinderWidth * 0.88),
+                        height: Math.floor(viewfinderHeight * 0.35),
+                    }),
                 },
                 (decodedText) => {
                     if (scannerRef.current) {
                         scannerRef.current.stop().then(() => {
+                            clearScanner();
                             setScanResult(decodedText);
                             setIsScanning(false);
-                            // Vibration tactile si supportée
                             if (navigator.vibrate) navigator.vibrate(100);
-                            // Petit délai pour montrer le feedback avant de remonter le résultat
                             setTimeout(() => {
                                 onScanSuccess(decodedText);
                             }, 600);
@@ -80,6 +118,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
         if (scannerRef.current && isScanning) {
             try {
                 await scannerRef.current.stop();
+                clearScanner();
                 setIsScanning(false);
             } catch (err) {
                 console.error(err);
@@ -89,7 +128,6 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
 
     return (
         <div className="flex flex-col items-center justify-center gap-4">
-            {/* Zone vidéo avec overlay */}
             <div className="relative w-full max-w-sm">
                 <div
                     id="reader"
@@ -98,22 +136,18 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                     }`}
                 />
 
-                {/* Overlay : instruction + animation de scan */}
                 {isScanning && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between rounded-[var(--radius-lg)]">
-                        {/* Texte d'instruction en haut */}
                         <div className="mt-3 rounded-full bg-ink/60 px-4 py-1.5 backdrop-blur-sm">
                             <p className="text-center text-xs font-bold text-white">
                                 Placez le code-barres dans le cadre
                             </p>
                         </div>
 
-                        {/* Ligne de scan animée */}
                         <div className="absolute inset-x-12 top-1/2 -translate-y-1/2">
                             <div className="h-0.5 animate-pulse rounded-full bg-coral shadow-[0_0_8px_var(--coral)]" />
                         </div>
 
-                        {/* Indicateur de scan actif en bas */}
                         <div className="mb-3 flex items-center gap-2 rounded-full bg-ink/60 px-3 py-1.5 backdrop-blur-sm">
                             <span className="relative flex h-2.5 w-2.5">
                                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
@@ -125,7 +159,6 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                 )}
             </div>
 
-            {/* Feedback de succès */}
             {scanResult && !isScanning && (
                 <div className="flex items-center gap-2 rounded-xl bg-teal-light px-4 py-2.5 text-teal-dark shadow-[var(--shadow-sm)] animate-in">
                     <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
