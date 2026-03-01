@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BarcodeScanner from "@/components/ui/BarcodeScanner";
 
 export default function NewProductForm({ locale, translations }: { locale: string, translations: any }) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const isDebug = searchParams.get("debug") === "true";
     const [isScanning, setIsScanning] = useState(false);
     const [barcode, setBarcode] = useState("");
     const [name, setName] = useState("");
@@ -84,6 +86,7 @@ export default function NewProductForm({ locale, translations }: { locale: strin
                     <BarcodeScanner
                         onScanSuccess={handleScanSuccess}
                         onScanFailure={(err) => console.log("Scan failed:", err)}
+                        debug={isDebug}
                     />
                     <div className="mt-4 text-center">
                         <button
