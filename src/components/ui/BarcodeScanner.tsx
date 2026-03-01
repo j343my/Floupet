@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { BarcodeDetector, type BarcodeFormat } from "barcode-detector";
 
 interface BarcodeScannerProps {
     onScanSuccess: (decodedText: string) => void;
@@ -9,37 +9,49 @@ interface BarcodeScannerProps {
     debug?: boolean;
 }
 
+const FORMATS: BarcodeFormat[] = [
+    "ean_13",
+    "ean_8",
+    "upc_a",
+    "upc_e",
+    "code_128",
+    "code_39",
+    "itf",
+    "codabar",
+    "qr_code",
+];
+
 export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = false }: BarcodeScannerProps) {
-    const scannerRef = useRef<Html5Qrcode | null>(null);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+    const rafRef = useRef<number | null>(null);
+    const detectorRef = useRef<BarcodeDetector | null>(null);
+    const isRunningRef = useRef(false);
+    const onScanSuccessRef = useRef(onScanSuccess);
+    const onScanFailureRef = useRef(onScanFailure);
+
     const [isScanning, setIsScanning] = useState(false);
     const [hasCameras, setHasCameras] = useState<boolean | null>(null);
-    const [cameras, setCameras] = useState<Array<{ id: string; label: string }>>([]);
     const [error, setError] = useState<string | null>(null);
     const [scanResult, setScanResult] = useState<string | null>(null);
-    const [debugInfo, setDebugInfo] = useState<{
-        scanAttempts: number;
-        qrboxSize: { width: number; height: number } | null;
-        cameraLabel: string;
-    }>({ scanAttempts: 0, qrboxSize: null, cameraLabel: "—" });
+    const [debugInfo, setDebugInfo] = useState<{ scanAttempts: number; cameraLabel: string }>({
+        scanAttempts: 0,
+        cameraLabel: "—",
+    });
 
-    const clearScanner = () => {
-        if (!scannerRef.current) return;
-
-        try {
-            scannerRef.current.clear();
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    // Keep callback refs up to date without restarting the loop
+    useEffect(() => { onScanSuccessRef.current = onScanSuccess; }, [onScanSuccess]);
+    useEffect(() => { onScanFailureRef.current = onScanFailure; }, [onScanFailure]);
 
     useEffect(() => {
-        Html5Qrcode.getCameras()
+        navigator.mediaDevices
+            .enumerateDevices()
             .then((devices) => {
-                if (devices && devices.length > 0) {
-                    setCameras(devices);
+                const videoDevices = devices.filter((d) => d.kind === "videoinput");
+                if (videoDevices.length > 0) {
                     setHasCameras(true);
                     if (debug) {
-                        const labels = devices.map((d) => d.label || `id:${d.id}`).join(", ");
+                        const labels = videoDevices.map((d) => d.label || `id:${d.deviceId.slice(0, 8)}`).join(", ");
                         setDebugInfo((prev) => ({ ...prev, cameraLabel: `[${labels}]` }));
                     }
                 } else {
@@ -53,24 +65,51 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
             });
 
         return () => {
-            if (scannerRef.current) {
-                scannerRef.current.stop().catch(console.error);
-                clearScanner();
-            }
+            stopScanning();
         };
-    }, [debug]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    // Sélectionne la caméra arrière par ID pour éviter les problèmes de facingMode sur iOS
-    const pickRearCamera = (): string | { facingMode: string } => {
-        if (cameras.length === 0) return { facingMode: "environment" };
-        const rear = cameras.find((c) => {
-            const label = c.label.toLowerCase();
-            return label.includes("arrière") || label.includes("back") || label.includes("rear") || label.includes("environment");
-        }) ?? cameras.find((c) => {
-            const label = c.label.toLowerCase();
-            return !label.includes("avant") && !label.includes("front") && !label.includes("selfie") && !label.includes("facetime");
-        }) ?? cameras[cameras.length - 1];
-        return rear ? rear.id : { facingMode: "environment" };
+    const stopScanning = () => {
+        isRunningRef.current = false;
+        if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+        }
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((t) => t.stop());
+            streamRef.current = null;
+        }
+        if (videoRef.current) {
+            videoRef.current.srcObject = null;
+        }
+        setIsScanning(false);
+    };
+
+    const scanLoop = async () => {
+        if (!isRunningRef.current) return;
+
+        const video = videoRef.current;
+        const detector = detectorRef.current;
+
+        if (video && detector && video.readyState >= video.HAVE_ENOUGH_DATA) {
+            try {
+                const barcodes = await detector.detect(video);
+                if (barcodes.length > 0 && isRunningRef.current) {
+                    const code = barcodes[0].rawValue;
+                    stopScanning();
+                    setScanResult(code);
+                    if (navigator.vibrate) navigator.vibrate(100);
+                    setTimeout(() => onScanSuccessRef.current(code), 600);
+                    return;
+                }
+            } catch {
+                if (debug) setDebugInfo((prev) => ({ ...prev, scanAttempts: prev.scanAttempts + 1 }));
+                if (onScanFailureRef.current) onScanFailureRef.current("Erreur de détection");
+            }
+        }
+
+        rafRef.current = requestAnimationFrame(scanLoop);
     };
 
     const startScanning = async () => {
@@ -79,85 +118,36 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
         setError(null);
         setScanResult(null);
         setDebugInfo((prev) => ({ ...prev, scanAttempts: 0 }));
+
         try {
-            // useBarCodeDetectorIfSupported désactivé : l'API native BarcodeDetector
-            // n'est pas supportée sur iOS Safari et cause l'échec silencieux du scan.
-            scannerRef.current = new Html5Qrcode("reader", {
-                verbose: false,
-                formatsToSupport: [
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.ITF,
-                    Html5QrcodeSupportedFormats.CODABAR,
-                    Html5QrcodeSupportedFormats.QR_CODE,
-                ],
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
             });
+            streamRef.current = stream;
 
-            const cameraIdOrConfig = pickRearCamera();
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                await videoRef.current.play();
+            }
 
-            await scannerRef.current.start(
-                cameraIdOrConfig,
-                {
-                    fps: 10,
-                    aspectRatio: 1.7777778,
-                    qrbox: (viewfinderWidth, viewfinderHeight) => {
-                        const size = {
-                            width: Math.floor(viewfinderWidth * 0.88),
-                            height: Math.floor(viewfinderHeight * 0.40),
-                        };
-                        if (debug) setDebugInfo((prev) => ({ ...prev, qrboxSize: size }));
-                        return size;
-                    },
-                },
-                (decodedText) => {
-                    if (scannerRef.current) {
-                        scannerRef.current.stop().then(() => {
-                            clearScanner();
-                            setScanResult(decodedText);
-                            setIsScanning(false);
-                            if (navigator.vibrate) navigator.vibrate(100);
-                            setTimeout(() => {
-                                onScanSuccess(decodedText);
-                            }, 600);
-                        }).catch(console.error);
-                    }
-                },
-                (errorMessage) => {
-                    if (debug) {
-                        setDebugInfo((prev) => ({ ...prev, scanAttempts: prev.scanAttempts + 1 }));
-                    }
-                    if (onScanFailure) onScanFailure(errorMessage);
-                }
-            );
+            detectorRef.current = new BarcodeDetector({ formats: FORMATS });
+            isRunningRef.current = true;
             setIsScanning(true);
-        } catch (err: unknown) {
+            rafRef.current = requestAnimationFrame(scanLoop);
+        } catch (err) {
             setError(err instanceof Error ? err.message : "Impossible de démarrer le scanner");
             setIsScanning(false);
-        }
-    };
-
-    const stopScanning = async () => {
-        if (scannerRef.current && isScanning) {
-            try {
-                await scannerRef.current.stop();
-                clearScanner();
-                setIsScanning(false);
-            } catch (err) {
-                console.error(err);
-            }
         }
     };
 
     return (
         <div className="flex flex-col items-center justify-center gap-4">
             <div className="relative w-full max-w-sm">
-                <div
-                    id="reader"
-                    className={`w-full overflow-hidden rounded-[var(--radius-lg)] bg-ink shadow-[var(--shadow-md)] transition-all duration-300 ${
+                <video
+                    ref={videoRef}
+                    muted
+                    playsInline
+                    className={`w-full overflow-hidden rounded-[var(--radius-lg)] bg-ink object-cover shadow-[var(--shadow-md)] transition-all duration-300 ${
                         isScanning ? "opacity-100" : "h-0 opacity-0"
                     }`}
                 />
@@ -184,8 +174,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
 
                         {debug && (
                             <div className="pointer-events-none absolute right-2 top-2 rounded-lg bg-black/70 px-2 py-1 text-left font-mono text-[10px] text-green-400">
-                                <div>📷 {typeof pickRearCamera() === "string" ? `id:${pickRearCamera()}` : "env (facingMode)"}</div>
-                                <div>📐 {debugInfo.qrboxSize ? `${debugInfo.qrboxSize.width}×${debugInfo.qrboxSize.height}` : "—"}</div>
+                                <div>📷 BarcodeDetector API</div>
                                 <div>🔄 tentatives: {debugInfo.scanAttempts}</div>
                                 <div className="max-w-[160px] truncate">🎥 {debugInfo.cameraLabel}</div>
                             </div>
@@ -199,7 +188,7 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure, debug = f
                     <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-bold">Code d&eacute;tect&eacute; : {scanResult}</span>
+                    <span className="text-sm font-bold">Code détecté : {scanResult}</span>
                 </div>
             )}
 
