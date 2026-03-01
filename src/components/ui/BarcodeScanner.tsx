@@ -13,9 +13,9 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
     const [isScanning, setIsScanning] = useState(false);
     const [hasCameras, setHasCameras] = useState<boolean | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [scanResult, setScanResult] = useState<string | null>(null);
 
     useEffect(() => {
-        // Check for cameras on mount
         Html5Qrcode.getCameras()
             .then((devices) => {
                 if (devices && devices.length > 0) {
@@ -25,22 +25,24 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                     setError("Aucune caméra détéctée.");
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 setHasCameras(false);
                 setError("Erreur d'accès à la caméra.");
             });
 
         return () => {
-            if (scannerRef.current && isScanning) {
+            if (scannerRef.current) {
                 scannerRef.current.stop().catch(console.error);
             }
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const startScanning = async () => {
         if (!hasCameras) return;
 
         setError(null);
+        setScanResult(null);
         try {
             scannerRef.current = new Html5Qrcode("reader");
             await scannerRef.current.start(
@@ -50,11 +52,16 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                     qrbox: { width: 250, height: 150 },
                 },
                 (decodedText) => {
-                    // Stop scanning once we have a result
                     if (scannerRef.current) {
                         scannerRef.current.stop().then(() => {
+                            setScanResult(decodedText);
                             setIsScanning(false);
-                            onScanSuccess(decodedText);
+                            // Vibration tactile si supportée
+                            if (navigator.vibrate) navigator.vibrate(100);
+                            // Petit délai pour montrer le feedback avant de remonter le résultat
+                            setTimeout(() => {
+                                onScanSuccess(decodedText);
+                            }, 600);
                         }).catch(console.error);
                     }
                 },
@@ -63,8 +70,8 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
                 }
             );
             setIsScanning(true);
-        } catch (err: any) {
-            setError(err.message || "Impossible de démarrer le scanner");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Impossible de démarrer le scanner");
             setIsScanning(false);
         }
     };
@@ -82,11 +89,51 @@ export default function BarcodeScanner({ onScanSuccess, onScanFailure }: Barcode
 
     return (
         <div className="flex flex-col items-center justify-center gap-4">
-            <div
-                id="reader"
-                className="w-full max-w-sm overflow-hidden rounded-[var(--radius-lg)] bg-sand-light shadow-[var(--shadow-sm)]"
-                style={{ display: isScanning ? 'block' : 'none' }}
-            ></div>
+            {/* Zone vidéo avec overlay */}
+            <div className="relative w-full max-w-sm">
+                <div
+                    id="reader"
+                    className={`w-full overflow-hidden rounded-[var(--radius-lg)] bg-ink shadow-[var(--shadow-md)] transition-all duration-300 ${
+                        isScanning ? "opacity-100" : "h-0 opacity-0"
+                    }`}
+                />
+
+                {/* Overlay : instruction + animation de scan */}
+                {isScanning && (
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between rounded-[var(--radius-lg)]">
+                        {/* Texte d'instruction en haut */}
+                        <div className="mt-3 rounded-full bg-ink/60 px-4 py-1.5 backdrop-blur-sm">
+                            <p className="text-center text-xs font-bold text-white">
+                                Placez le code-barres dans le cadre
+                            </p>
+                        </div>
+
+                        {/* Ligne de scan animée */}
+                        <div className="absolute inset-x-12 top-1/2 -translate-y-1/2">
+                            <div className="h-0.5 animate-pulse rounded-full bg-coral shadow-[0_0_8px_var(--coral)]" />
+                        </div>
+
+                        {/* Indicateur de scan actif en bas */}
+                        <div className="mb-3 flex items-center gap-2 rounded-full bg-ink/60 px-3 py-1.5 backdrop-blur-sm">
+                            <span className="relative flex h-2.5 w-2.5">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral opacity-75" />
+                                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-coral" />
+                            </span>
+                            <span className="text-xs font-bold text-white">Scan en cours…</span>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Feedback de succès */}
+            {scanResult && !isScanning && (
+                <div className="flex items-center gap-2 rounded-xl bg-teal-light px-4 py-2.5 text-teal-dark shadow-[var(--shadow-sm)] animate-in">
+                    <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-bold">Code d&eacute;tect&eacute; : {scanResult}</span>
+                </div>
+            )}
 
             {error && <p className="text-sm font-bold text-coral">{error}</p>}
 
