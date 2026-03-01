@@ -14,12 +14,30 @@ export default function NewProductForm({ locale, translations }: { locale: strin
     const [netWeight, setNetWeight] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [lookupStatus, setLookupStatus] = useState<"idle" | "loading" | "found" | "not_found">("idle");
 
-    const handleScanSuccess = (decodedText: string) => {
+    const handleScanSuccess = async (decodedText: string) => {
         setBarcode(decodedText);
         setIsScanning(false);
-        // Optional: Call openfoodfacts API here to pre-fill data based on barcode.
-        // For MVP, just filling the barcode is enough.
+        setLookupStatus("loading");
+
+        try {
+            const res = await fetch(`/api/products/lookup?barcode=${encodeURIComponent(decodedText)}`);
+            const data = await res.json();
+
+            if (data.product) {
+                const p = data.product;
+                if (p.name) setName(p.name);
+                if (p.brand) setBrand(p.brand);
+                if (p.product_type) setProductType(p.product_type);
+                if (p.net_weight_g) setNetWeight(String(p.net_weight_g));
+                setLookupStatus("found");
+            } else {
+                setLookupStatus("not_found");
+            }
+        } catch {
+            setLookupStatus("not_found");
+        }
     };
 
     const handleManualScan = () => {
@@ -115,6 +133,15 @@ export default function NewProductForm({ locale, translations }: { locale: strin
                             className="rounded-[var(--radius-lg)] border-2 border-sand bg-sand-light px-4 py-3 font-body text-ink outline-none transition-all focus:border-coral focus:ring-4 focus:ring-coral-light"
                             placeholder="Ex: 3011146743818"
                         />
+                        {lookupStatus === "loading" && (
+                            <p className="text-xs font-medium text-gray">Recherche du produit en cours...</p>
+                        )}
+                        {lookupStatus === "found" && (
+                            <p className="text-xs font-bold text-green-600">Produit trouvé et pré-rempli automatiquement.</p>
+                        )}
+                        {lookupStatus === "not_found" && (
+                            <p className="text-xs font-medium text-gray">Produit inconnu, remplissez le formulaire manuellement.</p>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-2">
